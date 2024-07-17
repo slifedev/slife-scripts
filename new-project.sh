@@ -13,11 +13,11 @@ image_tag=
 
 # FUNCTIONS
 log() {
-  echo "$(date +'%Y-%m-$d %H:%M:%S') - $1"
+  echo "$(date +'%Y-%m-%d %H:%M:%S') - $1"
 }
 
 error_exit() {
-  echo "$(date +'%Y-%m-$d %H:%M:%S') - ERROR $1"
+  echo "$(date +'%Y-%m-%d %H:%M:%S') - ERROR $1"
   exit 1
 }
 
