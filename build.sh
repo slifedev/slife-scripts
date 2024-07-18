@@ -44,6 +44,10 @@ docker compose -p $project_name -f $yaml_path up -d || error_exit "Failed to sta
 log "Migrating $site_name"
 docker compose -p $project_name exec backend bench --site $site_name migrate || error_exit "Failed to migrate $site_name"
 
+# CLEAR ALL THE DANGLING IMAGES
+# log "Clearing dangling images"
+# docker rmi $(docker images -f dangling=true -q) || error_exit "Failed to clear dangling images"
+
 log "Clearing docker builder cache"
 echo y | docker builder prune || error_exit "Failed to clear docker builder cache"
 
