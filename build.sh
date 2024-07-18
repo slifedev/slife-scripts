@@ -12,12 +12,16 @@ site_name=
 
 # FUNCTIONS
 log() {
-  echo "$(date +'%Y-%m-%d %H:%M:%S') - $1"
+  echo -e "\033[0;34m$(date +'%Y-%m-%d %H:%M:%S') - $1\033[0m"
 }
 
 error_exit() {
-  echo "$(date +'%Y-%m-%d %H:%M:%S') - ERROR $1"
+  echo -e "\033[0;33m$(date +'%Y-%m-%d %H:%M:%S') - ERROR $1\033[0m"
   exit 1
+}
+
+warn() {
+  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - WARNING $1\033[0m"
 }
 
 # OPERATIONS
@@ -46,9 +50,9 @@ docker compose -p $project_name exec backend bench --site $site_name migrate || 
 
 # CLEAR ALL THE DANGLING IMAGES
 # log "Clearing dangling images"
-# docker rmi $(docker images -f dangling=true -q) || error_exit "Failed to clear dangling images"
+# docker rmi $(docker images -f dangling=true -q) || warn "Failed to clear dangling images"
 
 log "Clearing docker builder cache"
-echo y | docker builder prune || error_exit "Failed to clear docker builder cache"
+docker builder prune -f || warn "Failed to clear docker builder cache"
 
 printf "\033[0;32m$site_name has been built and deployed\033[0m\n"
