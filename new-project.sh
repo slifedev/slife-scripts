@@ -5,6 +5,7 @@ read -p "Enter new project name: " PROJECT_NAME
 read -p "Enter domain: " DOMAIN
 read -p "Enter site name: " SITE_NAME
 
+LOG_FILE=
 FRAPPE_REPO=
 FRAPPE_BRANCH=
 ERPNEXT_REPO=
@@ -13,16 +14,16 @@ IMAGE_TAG=
 
 # FUNCTIONS
 log() {
-  echo -e "\033[0;34m$(date +'%Y-%m-%d %H:%M:%S') - $1\033[0m"
+  echo -e "\033[0;34m$(date +'%Y-%m-%d %H:%M:%S') - $1\033[0m" | tee -a $LOG_FILE
 }
 
 error_exit() {
-  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - ERROR $1\033[0m"
+  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - ERROR $1\033[0m" | tee -a $LOG_FILE
   exit 1
 }
 
 warn() {
-  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - WARNING $1\033[0m"
+  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - WARNING $1\033[0m" | tee -a $LOG_FILE
 }
 
 # OPERATIONS

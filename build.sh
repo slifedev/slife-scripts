@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # VARIABLES
+LOG_FILE=
 FRAPPE_DOCKER_PATH=
 APPS_PATH=
 FRAPPE_REPO=
@@ -12,16 +13,16 @@ SITE_NAME=
 
 # FUNCTIONS
 log() {
-  echo -e "\033[0;34m$(date +'%Y-%m-%d %H:%M:%S') - $1\033[0m"
+  echo -e "\033[0;34m$(date +'%Y-%m-%d %H:%M:%S') - $1\033[0m" | tee -a $LOG_FILE
 }
 
 error_exit() {
-  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - ERROR $1\033[0m"
+  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - ERROR $1\033[0m" | tee -a $LOG_FILE
   exit 1
 }
 
 warn() {
-  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - WARNING $1\033[0m"
+  echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - WARNING $1\033[0m" | tee -a $LOG_FILE
 }
 
 # OPERATIONS
