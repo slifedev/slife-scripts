@@ -4,7 +4,7 @@
 FRAPPE_DOCKER_PATH=
 APPS_PATH=
 FRAPPE_REPO=
-frappe_branch=
+FRAPPE_BRANCH=
 YAML_PATH=
 IMAGE_TAG=
 PROJECT_NAME=
@@ -34,7 +34,7 @@ APPS_JSON_BASE64=$(base64 -w 0 $APPS_PATH) || error_exit "Failed to generate bas
 log "Building an image"
 docker build --no-cache\
   --build-arg=FRAPPE_PATH=$FRAPPE_REPO \
-  --build-arg=FRAPPE_BRANCH=$frappe_branch \
+  --build-arg=FRAPPE_BRANCH=$FRAPPE_BRANCH \
   --build-arg=PYTHON_VERSION=3.10.12 \
   --build-arg=NODE_VERSION=20.11.0 \
   --build-arg=APPS_JSON_BASE64=$APPS_JSON_BASE64 \
