@@ -5,12 +5,15 @@ read -p "Enter new project name: " PROJECT_NAME
 read -p "Enter domain: " DOMAIN
 read -p "Enter site name: " SITE_NAME
 
-LOG_FILE=
-FRAPPE_REPO=
-FRAPPE_BRANCH=
-ERPNEXT_REPO=
-ERPNEXT_BRANCH=
-IMAGE_TAG=
+#TRAEF_SUBD=""
+#TRAEF_EMAIL=""
+#TRAEF_PASS=""
+LOG_FILE=""
+FRAPPE_REPO=""
+FRAPPE_BRANCH=""
+ERPNEXT_REPO=""
+ERPNEXT_BRANCH=""
+IMAGE_TAG=""
 
 # FUNCTIONS
 log() {
@@ -53,18 +56,19 @@ docker build --no-cache\
   -t=$IMAGE_TAG \
   -f=images/custom/Containerfile . || error_exit "Failed to build an image"
 
-# Install Traefik
-# read -p "Enter subdomain for Traefik: " tr_sub
-# echo "TRAEFIK_DOMAIN=$tr_sub.$DOMAIN" > ../gitops-$PROJECT_NAME/traefik.env
-# read -p "Enter Traefik email: " tr_email
-# echo "EMAIL=$tr_email" >> ../gitops-$PROJECT_NAME/traefik.env
-# read -p "Enter Traefik password: " tr_pass
-# echo 'HASHED_PASSWORD='$(openssl passwd -apr1 $tr_pass | sed 's/\$/\\\$/g') >> ../gitops-$PROJECT_NAME/traefik.env
+#Install Traefik
+if [[ ! $(docker compose ls -a | grep traefik) ]]; then
+  mkdir ../gitops-traefik || error_exit "Faield to create gitops-traefik" 
 
-# docker compose --project-name traefik \
-#   --env-file ../gitops-$PROJECT_NAME/traefik.env \
-#   -f overrides/compose.traefik.yaml \
-#   -f overrides/compose.traefik-ssl.yaml up -d
+  echo "TRAEFIK_DOMAIN=$TRAEF_SUBD.$DOMAIN" > ../gitops-traefik/traefik.env || error_exit "Failed to write TRAEFIK_DOMAIN to traefik.env"
+  echo "EMAIL=$TRAEF_EMAIL" >> ../gitops-traefik/traefik.env || error_exit "Failed to write EMAIL to traefik.env"
+  echo 'HASHED_PASSWORD='$(openssl passwd -apr1 $TRAEF_PASS | sed -e s/\\$/\\$\\$/g) >> ../gitops-traefik/traefik.env || error_exit "Failed to write HASHED_PASSWORD to traefik.env"
+
+  docker compose --project-name traefik \
+    --env-file ../gitops-traefik/traefik.env \
+    -f overrides/compose.traefik.yaml \
+    -f overrides/compose.traefik-ssl.yaml up -d || error_exit "Failed to up Traefik"
+fi
 
 # Install MariaDB
 log "Changing MariaDB container name in overrides/compose.mariadb-shared.yaml"
