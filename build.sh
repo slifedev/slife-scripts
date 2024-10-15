@@ -7,6 +7,9 @@ APPS_PATH=
 FRAPPE_REPO=
 FRAPPE_BRANCH=
 IMAGE_TAG=
+NAMESPACE=
+DOCKER_USERNAME=
+DOCKER_PASSWORD=
 
 # FUNCTIONS
 log() {
@@ -39,4 +42,11 @@ docker build --no-cache\
   -t=$IMAGE_TAG \
   -f=images/custom/Containerfile . || error_exit "Failed to build an image"
 
-printf "\033[0;32m$SITE_NAME has been built successfully\033[0m\n"
+log "Docker login"
+echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin || error_exit "Failed to docker login"
+log "Tag $IMAGE_TAG"
+docker tag "$IMAGE_TAG" "$NAMESPACE/$IMAGE_TAG" || error_exit "Failed to tag $IMAGE_TAG"
+log "Push $IMAGE_TAG"
+docker push "$NAMESPACE/$IMAGE_TAG" || error_exit "Failed to push $NAMESPACE/$IMAGE_TAG"
+
+printf "\033[0;32m$NAMESPACE/IMAGE_TAG has been built successfully\033[0m\n"
