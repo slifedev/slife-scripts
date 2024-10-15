@@ -4,8 +4,11 @@
 LOG_FILE=
 YAML_PATH=
 IMAGE_TAG=
+NAMESPACE=
 PROJECT_NAME=
 SITE_NAME=
+DOCKER_USERNAME=
+DOCKER_PASSWORD=
 
 # FUNCTIONS
 log() {
@@ -21,9 +24,11 @@ warn() {
   echo -e "\033[0;31m$(date +'%Y-%m-%d %H:%M:%S') - WARNING $1\033[0m" | tee -a $LOG_FILE
 }
 
+log "Docker login"
+echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin || error_exit "Failed to docker login"
 
-log "Pulling image"
-docker pull $IMAGE_TAG || error_exit "Failed to pull $IMAGE_TAG"
+log "Pulling $NAMESPACE/IMAGE_TAG"
+docker pull "$NAMESPACE/$IMAGE_TAG" || error_exit "Failed to pull $NAMESPACE/$IMAGE_TAG"
 
 log "Stopping $PROJECT_NAME"
 docker compose -p $PROJECT_NAME down || error_exit "Failed to stop $PROJECT_NAME"
@@ -35,8 +40,5 @@ docker compose -p $PROJECT_NAME exec backend bench --site $SITE_NAME migrate || 
 # CLEAR ALL THE DANGLING IMAGES
 # log "Clearing dangling images"
 # docker rmi $(docker images -f dangling=true -q) || warn "Failed to clear dangling images"
-
-log "Clearing docker builder cache"
-docker builder prune -f || warn "Failed to clear docker builder cache"
 
 printf "\033[0;32m$SITE_NAME has been built and deployed\033[0m\n"

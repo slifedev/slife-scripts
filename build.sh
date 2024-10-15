@@ -49,4 +49,7 @@ docker tag "$IMAGE_TAG" "$NAMESPACE/$IMAGE_TAG" || error_exit "Failed to tag $IM
 log "Push $IMAGE_TAG"
 docker push "$NAMESPACE/$IMAGE_TAG" || error_exit "Failed to push $NAMESPACE/$IMAGE_TAG"
 
+log "Clear builder cache"
+docker builder prune -f
+
 printf "\033[0;32m$NAMESPACE/IMAGE_TAG has been built successfully\033[0m\n"
